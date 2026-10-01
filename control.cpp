@@ -1,114 +1,144 @@
 #include <Servo.h>
 
-// --- Pin Definitions ---
+// --- Pin Definitions (Same as your wiring) ---
 const int TRIG_PIN = 12;
 const int ECHO_PIN = 11;
 const int SERVO_PIN = 10;
-
-// Motor Driver Pins (L298N)
 const int IN1 = 4;
 const int IN2 = 5;
 const int IN3 = 6;
 const int IN4 = 7;
 
-// --- Performance Tuning Settings ---
-const int DISTANCE_THRESHOLD = 30; // Stop/Turn if an obstacle is within 30cm
-const int SERVO_SPEED_DELAY = 12;  // Speed of sweep: Lower = faster (milliseconds per step)
-int servoDirection = 15;           // Degrees to jump per step. Higher = faster scan, lower accuracy.
+// --- Ultra-Short Range Precision Tuning ---
+const int SAFE_DISTANCE = 20;     // Trigger scan ONLY if wall is closer than 20cm
+const int SCAN_DELAY = 220;        // Quickened snap delay for the servo (220ms)
 
 Servo radarServo;
-int servoAngle = 90;
-unsigned long lastServoMoveTime = 0;
+
+// Spatial Memory Variables
+int distanceLeft = 999;
+int distanceCenter = 999;
+int distanceRight = 999;
 
 void setup() {
-  // Initialize Ultrasonic Sensor Pins
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  
-  // Initialize Motor Pins
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
   
-  // Initialize Servo
   radarServo.attach(SERVO_PIN);
-  radarServo.write(servoAngle);
-  
-  delay(600); // Give the servo time to center before the robot starts moving
+  radarServo.write(90); // Start locked straight ahead
+  delay(600); 
 }
 
 void loop() {
-  // 1. High-Speed Non-Blocking Servo Scan
-  if (millis() - lastServoMoveTime >= SERVO_SPEED_DELAY) {
-    lastServoMoveTime = millis();
+  // Keep the sensor eye locked straight ahead while moving forward normally
+  radarServo.write(90);
+  
+  // Read current distance with the new ultra-short range limits
+  int currentDistance = readFilteredDistance();
+
+  // If path is clear (nothing within 30cm), keep moving forward
+  if (currentDistance > SAFE_DISTANCE) {
+    moveForward();
+  } 
+  // True obstacle detected very close right in front! 
+  else {
+    moveStop(); // Halt the wheels immediately to scan safely
+    delay(100); // Quick settle of momentum
     
-    servoAngle += servoDirection;
-    // Reverse direction at the 180-degree boundaries
-    if (servoAngle >= 165 || servoAngle <= 15) {
-      servoDirection = -servoDirection; 
-    }
-    radarServo.write(servoAngle);
-  }
+    // EXECUTE FAST RADAR SCAN AND FILL SPATIAL MEMORY
+    distanceCenter = currentDistance; 
+    
+    // Snap Left and measure
+    radarServo.write(160);
+    delay(SCAN_DELAY); 
+    distanceLeft = readFilteredDistance();
+    
+    // Snap Right and measure
+    radarServo.write(20);
+    delay(SCAN_DELAY);
+    distanceRight = readFilteredDistance();
+    
+    // Re-center the radar eye
+    radarServo.write(90);
+    delay(150);
 
-  // 2. Continuous Distance Reading
-  int distance = readDistance();
-
-  // 3. Fluid Evasive Steering Logic
-  if (distance > 0 && distance < DISTANCE_THRESHOLD) {
-    // Obstacle detected on the left side of the vision field
-    if (servoAngle > 95) {
-      spinRight(); 
-      delay(180); // Quick snap-turn to clear the obstacle
+    // SMART BRAIN DECISION LOGIC BASED ON THE ULTRA-CLOSE SCAN
+    if (distanceLeft > distanceRight) {
+      // Left side is clearer! Execute a sharp left pivot
+      spinLeft();
+      delay(260); // Time to turn away cleanly
     } 
-    // Obstacle detected on the right side of the vision field
-    else if (servoAngle < 85) {
-      spinLeft();  
-      delay(180); 
-    } 
-    // Obstacle is dead ahead
-    else {
-      reverseFluid();
-      delay(250);
+    else if (distanceRight > distanceLeft) {
+      // Right side is clearer! Execute a sharp right pivot
       spinRight();
-      delay(200);
+      delay(260); 
+    } 
+    else {
+      // Both sides are tight or blocked! Back up fluidly and turn out
+      reverseFluid();
+      delay(300);
+      spinRight();
+      delay(250);
     }
-  } else {
-    // Path is completely clear, full speed ahead!
-    moveForward(); 
+    
+    // Reset spatial memory cache before continuing back to the forward loop
+    distanceLeft = 999;
+    distanceCenter = 999;
+    distanceRight = 999;
+    
+    moveStop();
+    delay(100); 
   }
 }
 
-// Function to calculate exact distance via soundwaves
-int readDistance() {
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
+// Noise-filtering distance read function with HARD-RESTRICTED PRECISION RANGE
+int readFilteredDistance() {
+  int totalDistance = 0;
+  int validReadings = 0;
   
-  // 18ms timeout limits maximum range to ~3 meters so the code never lags out waiting
-  long duration = pulseIn(ECHO_PIN, HIGH, 18000); 
-  if (duration == 0) return 999; // Assume path is clear if no echo returns
+  for (int i = 0; i < 2; i++) { 
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    // 1800 microseconds timeout physically cuts off anything beyond ~30cm!
+    // This forms a tight shield against distant echoes or noise.
+    long duration = pulseIn(ECHO_PIN, HIGH, 1800); 
+    int cm = duration * 0.034 / 2;
+    
+    if (duration > 0 && cm > 0 && cm <= 30) {
+      totalDistance += cm;
+      validReadings++;
+    }
+    delayMicroseconds(150);
+  }
   
-  return duration * 0.034 / 2; // Convert duration to centimeters
+  if (validReadings > 0) {
+    return totalDistance / validReadings;
+  }
+  return 999; // If out of range (>30cm), treat it as perfectly wide open space
 }
 
-// --- Drivetrain Movement Profiles for 2-Motor + Castor Roller Chassis ---
-
+// --- Drivetrain Movements ---
 void moveForward() {
   digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
 }
 
 void spinLeft() {
-  digitalWrite(IN1, LOW);  digitalWrite(IN2, HIGH); // Left wheel backward
-  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);  // Right wheel forward
+  digitalWrite(IN1, LOW);  digitalWrite(IN2, HIGH); 
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);  
 }
 
 void spinRight() {
-  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);  // Left wheel forward
-  digitalWrite(IN3, LOW);  digitalWrite(IN4, HIGH); // Right wheel backward
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);  
+  digitalWrite(IN3, LOW);  digitalWrite(IN4, HIGH); 
 }
 
 void reverseFluid() {
