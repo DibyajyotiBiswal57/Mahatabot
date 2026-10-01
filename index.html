@@ -304,6 +304,15 @@
       background: rgba(255,255,255,.04);
     }
 
+    .robot-image {
+      display: block;
+      width: 100%;
+      max-width: 560px;
+      margin: 16px auto 0;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.2);
+    }
+
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
@@ -448,8 +457,8 @@
         <p class="section-copy">
           The physical build combines sensors, chassis, and control design to make the
           autonomous idea work in real motion.
-          <img src= "https://github.com/DibyajyotiBiswal57/Mahatabot/blob/8a169f47166d4e209ddf73dba1217ddb13ba5925/mahatabot.jpeg" alt="MB/3.0 robot picture"/>
         </p>
+        <img class="robot-image" src="./mahatabot.jpeg" alt="MB/3.0 robot picture" />
       </article>
 
       <article class="panel section-card" id="credits">
