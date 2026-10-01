@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mahatabot | Animated Landing</title>
+  <title>MAHATABOT/3.0 | Obstacle Avoidance Robot</title>
   <style>
     :root {
       --bg-1: #070b1a;
@@ -106,6 +106,24 @@
       grid-template-columns: 1.05fr .95fr;
       gap: 26px;
       align-items: stretch;
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .quick-links a {
+      text-decoration: none;
+      color: #d6defd;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.05);
     }
 
     .panel {
@@ -217,6 +235,75 @@
       font-size: .86rem;
     }
 
+    .stack {
+      margin-top: 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-card {
+      padding: 24px;
+      animation: slideUp .9s ease both;
+    }
+
+    .section-kicker {
+      font-size: .76rem;
+      letter-spacing: .2em;
+      color: #c6d2ff;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.25rem, 2.3vw, 1.8rem);
+    }
+
+    .section-copy {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .mini-grid {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .mini-item {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+
+    .mini-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .92rem;
+    }
+
+    .mini-item span {
+      color: var(--muted);
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    .credits {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .credits div {
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+    }
+
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
@@ -231,6 +318,8 @@
       .hero { grid-template-columns: 1fr; }
       .left { padding: 24px; }
       .stats { grid-template-columns: 1fr 1fr; }
+      .mini-grid { grid-template-columns: 1fr; }
+      .credits { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
@@ -251,16 +340,25 @@
       <a class="cta" href="#video">Watch Demo</a>
     </nav>
 
-    <section class="hero">
+    <div class="quick-links">
+      <a href="#intro">MAHATABOT/3.0</a>
+      <a href="#about">About</a>
+      <a href="#process">How it Works</a>
+      <a href="#robot-photo">In Action</a>
+      <a href="#credits">Credits</a>
+    </div>
+
+    <section class="hero" id="intro">
       <article class="panel left">
         <div class="badge">AI • Automation • Robotics</div>
         <h1>
-          Build bold ideas with
-          <span class="grad">intelligent automation</span>
+          Made to move.
+          Built to
+          <span class="grad">think.</span>
         </h1>
         <p class="subtitle">
-          A modern animated landing page crafted with smooth gradients, motion effects,
-          and a clean glass UI. Scroll, hover, and explore the interactions.
+          Meet MAHATABOT/3.0: a small autonomous robot that reads the space ahead,
+          reacts to obstacles, and chooses a clearer way forward.
         </p>
 
         <div class="stats">
@@ -291,7 +389,80 @@
             allowfullscreen>
           </iframe>
         </div>
+        <p class="footer-note">04 / IN MOTION</p>
         <p class="footer-note">Now playing: YouTube demo video</p>
+      </article>
+    </section>
+
+    <section class="stack">
+      <article class="panel section-card" id="about">
+        <div class="section-kicker">01 / THE IDEA</div>
+        <h2>A smarter way around.</h2>
+        <p class="section-copy">
+          MAHATABOT/3.0 is a school-built exploration of autonomous movement. Instead
+          of following a fixed path, it checks the space ahead and responds when that
+          path is blocked, turning simple inputs into useful decisions.
+        </p>
+        <div class="mini-grid">
+          <div class="mini-item">
+            <strong>Sense the space</strong>
+            <span>A forward-facing sensor monitors the path and looks for nearby obstacles.</span>
+          </div>
+          <div class="mini-item">
+            <strong>Choose a direction</strong>
+            <span>Control logic compares available space and selects a clearer turn.</span>
+          </div>
+          <div class="mini-item">
+            <strong>Keep moving</strong>
+            <span>The drive system follows that direction and scans continuously.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel section-card" id="process">
+        <div class="section-kicker">02 / THE LOOP</div>
+        <h2>Sense. Decide. Move.</h2>
+        <p class="section-copy">
+          Autonomy is a repeating cycle, not a one-time instruction. The robot keeps
+          observing its path and adjusting movement as the environment changes.
+        </p>
+        <div class="mini-grid">
+          <div class="mini-item">
+            <strong>01 / Input</strong>
+            <span>Read the path ahead for immediate obstacles.</span>
+          </div>
+          <div class="mini-item">
+            <strong>02 / Logic</strong>
+            <span>Find an opening when the route is blocked.</span>
+          </div>
+          <div class="mini-item">
+            <strong>03 / Output</strong>
+            <span>Move, reroute, and scan again in a continuous loop.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel section-card" id="robot-photo">
+        <div class="section-kicker">03 / THE REAL BUILD</div>
+        <h2>Meet the real machine.</h2>
+        <p class="section-copy">
+          The physical build combines sensors, chassis, and control design to make the
+          autonomous idea work in real motion.
+        </p>
+      </article>
+
+      <article class="panel section-card" id="credits">
+        <div class="section-kicker">05 / THE PEOPLE</div>
+        <h2>Built by curious minds.</h2>
+        <p class="section-copy">
+          A project shaped by experimentation, teamwork, and plenty of testing.
+        </p>
+        <div class="credits">
+          <div><strong>Project Lead</strong><br>Hrittik Mahata</div>
+          <div><strong>Build, Design & Code</strong><br>Dibyajyoti, Amitesh, Aryaman</div>
+          <div><strong>Guidance</strong><br>P. Deepti Ma'am</div>
+          <div><strong>Project</strong><br>MB/3.0 Autonomous Obstacle Avoidance</div>
+        </div>
       </article>
     </section>
   </main>
