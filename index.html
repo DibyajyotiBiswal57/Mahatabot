@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mahatabot | Animated Landing</title>
+  <style>
+    :root {
+      --bg-1: #070b1a;
+      --bg-2: #0d1633;
+      --glow-1: #4f7cff;
+      --glow-2: #9d4dff;
+      --text: #f5f7ff;
+      --muted: #afbad4;
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(79, 124, 255, 0.35), transparent 34%),
+        radial-gradient(circle at 85% 15%, rgba(157, 77, 255, 0.28), transparent 30%),
+        linear-gradient(140deg, var(--bg-1), var(--bg-2));
+      overflow-x: hidden;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.05) 0.8px, transparent 0.8px);
+      background-size: 4px 4px;
+      opacity: 0.2;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .aurora {
+      position: fixed;
+      width: 55vmax;
+      height: 55vmax;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+      animation: float 14s ease-in-out infinite;
+    }
+
+    .a1 { background: var(--glow-1); top: -20vmax; left: -10vmax; }
+    .a2 { background: var(--glow-2); bottom: -25vmax; right: -10vmax; animation-delay: -6s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) translateX(0) scale(1); }
+      50% { transform: translateY(18px) translateX(14px) scale(1.05); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: min(1100px, 92vw);
+      margin: 0 auto;
+      padding: 32px 0 68px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-weight: 800;
+      letter-spacing: .5px;
+      font-size: 1.05rem;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .cta {
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.34);
+      background: linear-gradient(120deg, rgba(79,124,255,0.5), rgba(157,77,255,0.5));
+      box-shadow: 0 10px 30px rgba(28, 43, 98, 0.5);
+      transition: transform .25s ease;
+    }
+
+    .cta:hover { transform: translateY(-2px); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+
+    .left {
+      padding: 34px;
+      animation: slideUp .8s ease both;
+    }
+
+    .badge {
+      width: fit-content;
+      font-size: .78rem;
+      color: #d4dcff;
+      letter-spacing: .3px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.08);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4vw, 3.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .grad {
+      background: linear-gradient(100deg, #8ac3ff, #ce9bff 60%, #8ac3ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 48ch;
+    }
+
+    .stats {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .right {
+      padding: 14px;
+      animation: slideUp .95s ease .08s both;
+    }
+
+    .video-shell {
+      position: relative;
+      border-radius: 18px;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(138,195,255,.5), rgba(206,155,255,.45));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+    }
+
+    .video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 12px;
+      display: block;
+      background: #000;
+    }
+
+    .glow-ring {
+      position: absolute;
+      inset: -18px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.2);
+      pointer-events: none;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      text-align: center;
+      color: #c7d3ff;
+      font-size: .86rem;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: .35; transform: scale(1); }
+      50% { opacity: .8; transform: scale(1.015); }
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .left { padding: 24px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .stats { grid-template-columns: 1fr; }
+      .container { padding-top: 24px; }
+      .nav { margin-bottom: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="aurora a1"></div>
+  <div class="aurora a2"></div>
+
+  <main class="container">
+    <nav class="nav">
+      <div class="logo">Mahatabot</div>
+      <a class="cta" href="#video">Watch Demo</a>
+    </nav>
+
+    <section class="hero">
+      <article class="panel left">
+        <div class="badge">AI • Automation • Robotics</div>
+        <h1>
+          Build bold ideas with
+          <span class="grad">intelligent automation</span>
+        </h1>
+        <p class="subtitle">
+          A modern animated landing page crafted with smooth gradients, motion effects,
+          and a clean glass UI. Scroll, hover, and explore the interactions.
+        </p>
+
+        <div class="stats">
+          <div class="stat">
+            <strong>24/7</strong>
+            <span>Reliable Runtime</span>
+          </div>
+          <div class="stat">
+            <strong>99.9%</strong>
+            <span>Automation Uptime</span>
+          </div>
+          <div class="stat">
+            <strong>10x</strong>
+            <span>Faster Workflows</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel right" id="video">
+        <div class="video-shell">
+          <div class="glow-ring"></div>
+          <iframe
+            class="video"
+            src="https://www.youtube.com/embed/gpIXB44mrDo"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="footer-note">Now playing: YouTube demo video</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const container = document.querySelector('.container');
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 8;
+      const y = (e.clientY / window.innerHeight - 0.5) * 8;
+      container.style.transform = `translate3d(${x * -0.25}px, ${y * -0.25}px, 0)`;
+    });
+  </script>
+</body>
+</html>
